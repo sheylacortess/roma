@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roma · Un día eterno</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --terracotta: #C4622D;
+    --gold: #B8955A;
+    --cream: #F5EFE6;
+    --dark: #1A1410;
+    --stone: #8C7B6B;
+    --rust: #9B3A1A;
+    --parchment: #EDE3D4;
+    --night: #0D0B08;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    background: var(--night);
+    padding: 60px 20px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 60%, rgba(196,98,45,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 30%, rgba(184,149,90,0.10) 0%, transparent 50%);
+  }
+  .hero-date { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.35em; color: var(--gold); text-transform: uppercase; margin-bottom: 24px; opacity: 0; animation: fadeUp 1s 0.3s forwards; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(4rem, 12vw, 10rem); font-weight: 900; line-height: 0.9; color: var(--cream); letter-spacing: -0.02em; opacity: 0; animation: fadeUp 1s 0.5s forwards; }
+  .hero-title span { display: block; color: var(--terracotta); font-style: italic; }
+  .hero-subtitle { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 300; font-style: italic; color: var(--stone); margin-top: 24px; opacity: 0; animation: fadeUp 1s 0.7s forwards; }
+  .hero-meta { display: flex; gap: 40px; margin-top: 48px; opacity: 0; animation: fadeUp 1s 0.9s forwards; }
+  .hero-meta-item { text-align: center; }
+  .hero-meta-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .hero-meta-label { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--stone); text-transform: uppercase; margin-top: 4px; }
+  .hero-divider { width: 1px; height: 60px; background: var(--stone); opacity: 0.3; align-self: center; }
+  .scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 1s 1.2s forwards; }
+  .scroll-hint span { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--stone); text-transform: uppercase; }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollLine 2s infinite; }
+
+  /* ─── TIMELINE ─── */
+  .timeline-section { padding: 80px 20px; max-width: 1400px; margin: 0 auto; }
+  .section-label { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: var(--cream); margin-bottom: 60px; line-height: 1.1; }
+  .section-title em { color: var(--terracotta); font-style: italic; }
+
+  /* ─── STOP ─── */
+  .stop { display: grid; grid-template-columns: 90px 1fr; gap: 0 24px; margin-bottom: 0; position: relative; }
+  .stop:not(:last-child) .stop-line { display: block; }
+  .stop-time-col { display: flex; flex-direction: column; align-items: center; position: relative; }
+  .stop-time { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); white-space: nowrap; background: var(--dark); position: relative; z-index: 1; padding: 4px 0; }
+  .stop-line { width: 1px; flex: 1; background: linear-gradient(to bottom, var(--gold), rgba(184,149,90,0.1)); margin-top: 8px; min-height: 40px; }
+  .stop-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--terracotta); border: 2px solid var(--dark); box-shadow: 0 0 0 2px var(--terracotta); position: absolute; top: 14px; right: -5px; z-index: 2; }
+  .stop-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; margin-bottom: 40px; transition: border-color 0.3s; }
+  .stop-card:hover { border-color: rgba(184,149,90,0.3); }
+
+  /* ─── CARD INNER ─── */
+  .stop-card-inner {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    min-height: 280px;
+    align-items: stretch;
+  }
+  .stop-card-inner.food-card { grid-template-columns: 1fr; }
+  .stop-info { padding: 36px; display: flex; flex-direction: column; justify-content: space-between; }
+  .stop-type { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.35em; color: var(--terracotta); text-transform: uppercase; margin-bottom: 12px; }
+  .stop-name { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: var(--cream); line-height: 1.15; margin-bottom: 16px; }
+  .stop-desc { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--stone); line-height: 1.7; margin-bottom: 20px; flex: 1; }
+  .stop-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+  .tag { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 5px 12px; border: 1px solid rgba(184,149,90,0.4); color: var(--gold); border-radius: 100px; }
+  .tag.tip { border-color: rgba(196,98,45,0.4); color: var(--terracotta); }
+
+  /* ─── FOTO SECTION ─── */
+  .stop-photos {
+    position: relative;
+    overflow: hidden;
+    background: #111;
+    display: flex;
+    flex-direction: column;
+  }
+  .photo-label {
+    position: absolute; top: 20px; right: 20px; z-index: 3;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    border: 1px solid rgba(184,149,90,0.3); padding: 6px 14px;
+    border-radius: 100px; font-family: 'Montserrat', sans-serif;
+    font-size: 0.55rem; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase;
+  }
+  .photo-single { flex: 1; min-height: 280px; }
+  .photo-single img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.85) saturate(0.9); transition: filter 0.4s; cursor: zoom-in; }
+  .photo-single img:hover { filter: brightness(1) saturate(1.05); }
+  .photo-grid { flex: 1; display: flex; flex-direction: column; min-height: 280px; }
+  .photo-grid-top { flex: 1.4; overflow: hidden; min-height: 0; }
+  .photo-grid-bottom { flex: 1; display: flex; min-height: 0; }
+  .photo-grid-bottom > .photo-overlay-wrap { flex: 1; min-height: 0; }
+  .photo-overlay-wrap { position: relative; overflow: hidden; height: 100%; min-height: 0; }
+  .photo-overlay-wrap img, .photo-grid-top img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.85) saturate(0.9); transition: all 0.4s; cursor: zoom-in; }
+  .photo-overlay-wrap img:hover, .photo-grid-top img:hover { filter: brightness(1) saturate(1.1); }
+  .photo-overlay-wrap::after { content: '📍 Foto Pinterest'; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); color: var(--cream); font-family: 'Montserrat', sans-serif; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 5px 10px; border-radius: 100px; pointer-events: none; }
+
+  /* ─── NOCHE ─── */
+  .night-banner { background: linear-gradient(135deg, var(--night) 0%, #1a0d05 50%, var(--night) 100%); border-top: 1px solid rgba(184,149,90,0.2); border-bottom: 1px solid rgba(184,149,90,0.2); padding: 80px 40px; text-align: center; position: relative; overflow: hidden; }
+  .night-banner::before { content: '✦'; font-size: 12rem; color: rgba(184,149,90,0.04); position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+  .night-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; color: var(--cream); margin-bottom: 16px; }
+  .night-title em { color: var(--gold); font-style: italic; }
+  .night-desc { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--stone); max-width: 600px; margin: 0 auto; font-style: italic; }
+
+  /* ─── RUTA RESUMEN ─── */
+  .map-section { padding: 80px 20px; max-width: 1100px; margin: 0 auto; }
+  .route-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2px; margin-top: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); }
+  .route-item { padding: 24px 20px; background: var(--dark); display: flex; flex-direction: column; gap: 6px; transition: background 0.2s; }
+  .route-item:hover { background: rgba(184,149,90,0.05); }
+  .route-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--terracotta); opacity: 0.5; line-height: 1; }
+  .route-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 500; color: var(--cream); }
+  .route-time { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; }
+
+  /* ─── TIPS ─── */
+  .tips-section { background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.06); padding: 80px 20px; }
+  .tips-grid { max-width: 1100px; margin: 40px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+  .tip-card { padding: 28px; border: 1px solid rgba(255,255,255,0.07); border-radius: 2px; background: rgba(255,255,255,0.02); }
+  .tip-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
+  .tip-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--cream); margin-bottom: 8px; }
+  .tip-text { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; color: var(--stone); line-height: 1.6; }
+
+  /* ─── FOOTER ─── */
+  footer { text-align: center; padding: 60px 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  footer p { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; color: var(--gold); margin-bottom: 8px; }
+  footer small { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--stone); text-transform: uppercase; }
+
+  /* ─── RATING ─── */
+  .rating { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+  .stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.05em; }
+  .rating-num { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: var(--stone); }
+
+  /* ─── DECORATIVE ─── */
+  .separator { display: flex; align-items: center; justify-content: center; padding: 40px 0; gap: 0; }
+  .sep-line { flex: 1; max-width: 200px; height: 1px; background: linear-gradient(to right, transparent, rgba(184,149,90,0.3)); }
+  .sep-line.right { background: linear-gradient(to left, transparent, rgba(184,149,90,0.3)); }
+  .sep-diamond { width: 8px; height: 8px; border: 1px solid var(--gold); transform: rotate(45deg); margin: 0 20px; opacity: 0.5; }
+
+  /* ─── KEYFRAMES ─── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scrollLine { 0% { transform: scaleY(0); transform-origin: top; opacity: 1; } 50% { transform: scaleY(1); transform-origin: top; opacity: 1; } 51% { transform: scaleY(1); transform-origin: bottom; opacity: 1; } 100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; } }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .stop { grid-template-columns: 80px 1fr; gap: 0 20px; }
+    .stop-card-inner { grid-template-columns: 1fr; }
+    .stop-photos { min-height: 280px; }
+    .photo-grid, .photo-single { min-height: 280px; }
+    .hero-meta { flex-direction: column; gap: 20px; }
+    .hero-divider { width: 60px; height: 1px; }
+    .stop-info { padding: 24px; }
+    .tips-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── LIGHTBOX ─── */
+  .lb-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px); justify-content: center; align-items: center; padding: 20px; cursor: zoom-out; }
+  .lb-overlay.active { display: flex; animation: lbFadeIn 0.25s ease forwards; }
+  .lb-img-wrap { position: relative; max-width: 92vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; }
+  .lb-img-wrap img { max-width: 92vw; max-height: 88vh; width: auto; height: auto; object-fit: contain; border-radius: 2px; box-shadow: 0 32px 80px rgba(0,0,0,0.8); animation: lbZoomIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; cursor: default; }
+  .lb-close { position: fixed; top: 20px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--cream); font-size: 1.4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, transform 0.2s; z-index: 10000; line-height: 1; }
+  .lb-close:hover { background: rgba(255,255,255,0.18); transform: rotate(90deg); }
+  .lb-caption { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.5); padding: 6px 16px; border-radius: 100px; backdrop-filter: blur(8px); white-space: nowrap; pointer-events: none; }
+  .stop-photos img { cursor: zoom-in; }
+  @keyframes lbFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes lbZoomIn { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+
+  /* ─── MAPA NUEVO ─── */
+  .new-map-wrapper {
+    background: var(--night);
+    border: 1px solid rgba(184,149,90,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .new-map-header {
+    padding: 20px 28px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .new-map-header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--cream);
+    font-style: italic;
+  }
+  .new-map-header-sub {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .new-map-body {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    min-height: 560px;
+  }
+  .new-map-canvas { position: relative; background: #0c0905; overflow: hidden; }
+  .new-map-canvas svg { width: 100%; height: 100%; display: block; }
+  .new-map-panel {
+    border-left: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    background: rgba(255,255,255,0.01);
+    overflow: hidden;
+  }
+  .panel-intro {
+    padding: 20px 20px 0;
+    font-size: 0.82rem;
+    color: var(--stone);
+    font-style: italic;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+  .panel-stops {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 0 12px;
+  }
+  .panel-stops::-webkit-scrollbar { width: 3px; }
+  .panel-stops::-webkit-scrollbar-thumb { background: rgba(184,149,90,0.3); border-radius: 2px; }
+  .stop-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .stop-list-item:hover, .stop-list-item.active {
+    background: rgba(184,149,90,0.07);
+    border-left-color: var(--gold);
+  }
+  .stop-list-item.active { border-left-color: var(--terracotta); }
+  .stop-list-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--terracotta);
+    min-width: 22px;
+    line-height: 1.4;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+  .stop-list-text { flex: 1; min-width: 0; }
+  .stop-list-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.3;
+  }
+  .stop-list-time {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 2px;
+    display: block;
+  }
+  .stop-list-item.placeholder .stop-list-name { color: rgba(245,239,230,0.35); font-style: italic; }
+  .stop-list-item.placeholder .stop-list-num { color: rgba(184,149,90,0.4); }
+  .divider-label {
+    padding: 8px 20px 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: rgba(184,149,90,0.5);
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    margin-top: 4px;
+  }
+  .map-tooltip {
+    position: absolute;
+    background: rgba(8,6,4,0.96);
+    border: 1px solid rgba(184,149,90,0.5);
+    backdrop-filter: blur(16px);
+    padding: 12px 16px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 20;
+    min-width: 180px;
+    max-width: 240px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .map-tooltip.visible { opacity: 1; }
+  .tooltip-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .tooltip-time {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .tooltip-tip {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--stone);
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .map-legend-bar {
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    color: rgba(245,239,230,0.4);
+    text-transform: uppercase;
+  }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  @media (max-width: 700px) {
+    .new-map-body { grid-template-columns: 1fr; }
+    .new-map-panel { border-left: none; border-top: 1px solid rgba(255,255,255,0.06); max-height: 260px; }
+  }
+
+        /* ======== MEJORAS ESTÉTICAS ======== */
+
+        /* Fondo general más rico */
+        body {
+            background:
+                radial-gradient(ellipse at top, rgba(196,98,45,0.09) 0%, transparent 35%),
+                radial-gradient(ellipse at bottom right, rgba(184,149,90,0.06) 0%, transparent 40%),
+                linear-gradient(180deg, #0f0c09 0%, #14100d 50%, #100e0b 100%);
+        }
+
+        /* ---- TARJETAS DE PARADAS ---- */
+        .stop {
+            grid-template-columns: 68px 1fr;
+            gap: 0 16px;
+            margin-bottom: 0;
+        }
+        .stop-time {
+            font-size: 1.15rem;
+        }
+        .stop-card {
+            background: linear-gradient(165deg, rgba(255,255,255,0.048) 0%, rgba(255,255,255,0.018) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 22px;
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1),
+                        box-shadow 0.35s cubic-bezier(0.22,1,0.36,1),
+                        border-color 0.35s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.14);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .stop-card:hover {
+            transform: translateY(-6px) scale(1.003);
+            border-color: rgba(184,149,90,0.38);
+            box-shadow: 0 20px 48px rgba(0,0,0,0.32), 0 4px 12px rgba(0,0,0,0.18);
+        }
+        .stop-card-inner {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            min-height: 210px;
+            align-items: stretch;
+        }
+        .stop-card-inner.food-card {
+            grid-template-columns: 1fr;
+        }
+        .stop-info {
+            padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .stop-type {
+            font-size: 0.58rem;
+            letter-spacing: 0.32em;
+            margin-bottom: 8px;
+        }
+        .stop-name {
+            font-size: clamp(1.15rem, 2vw, 1.6rem);
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+        .stop-desc {
+            font-size: 0.9rem;
+            color: rgba(200,190,178,0.82);
+            line-height: 1.62;
+            margin-bottom: 14px;
+            flex: 1;
+        }
+        .stop-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: auto;
+        }
+        .tag {
+            font-size: 0.58rem;
+            letter-spacing: 0.13em;
+            padding: 5px 10px;
+            background: rgba(184,149,90,0.07);
+            border: 1px solid rgba(184,149,90,0.28);
+            border-radius: 100px;
+        }
+        .tag.tip {
+            background: rgba(196,98,45,0.07);
+            border-color: rgba(196,98,45,0.28);
+        }
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .stars { font-size: 0.76rem; }
+        .rating-num { font-size: 0.68rem; }
+
+        /* Fotos */
+        .stop-photos {
+            border-radius: 0 20px 20px 0;
+            overflow: hidden;
+        }
+        .photo-label {
+            top: 12px;
+            right: 12px;
+            font-size: 0.52rem;
+            padding: 5px 12px;
+            background: rgba(6,4,2,0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184,149,90,0.22);
+            border-radius: 100px;
+        }
+        .photo-single {
+            flex: 1;
+            min-height: 210px;
+        }
+        .photo-grid,
+        .photo-grid-top,
+        .photo-grid-bottom {
+            min-height: 0;
+        }
+        .photo-grid { min-height: 210px; }
+
+        /* ---- TIMELINE SECTION ---- */
+        .timeline-section {
+            padding: 60px 20px;
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+        .section-label {
+            font-size: 0.62rem;
+            letter-spacing: 0.38em;
+            margin-bottom: 6px;
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 4.5vw, 3rem);
+            margin-bottom: 44px;
+            line-height: 1.08;
+        }
+
+        /* ---- RUTA RESUMEN ---- */
+        .map-section {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .route-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            gap: 2px;
+            margin-top: 36px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 14px 38px rgba(0,0,0,0.2);
+        }
+        .route-item {
+            padding: 18px 16px;
+            background: rgba(15,11,8,0.92);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: background 0.2s;
+        }
+        .route-item:hover {
+            background: rgba(184,149,90,0.06);
+        }
+        .route-num {
+            font-size: 1.6rem;
+        }
+        .route-name {
+            font-size: 0.88rem;
+        }
+        .route-time {
+            font-size: 0.56rem;
+            letter-spacing: 0.14em;
+        }
+
+        /* ---- TIPS ---- */
+        .tips-section {
+            padding: 60px 20px;
+        }
+        .tips-grid {
+            max-width: 1000px;
+            margin: 36px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+            gap: 18px;
+        }
+        .tip-card {
+            padding: 22px;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            background: linear-gradient(165deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+            box-shadow: 0 8px 22px rgba(0,0,0,0.15);
+            transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
+                        border-color 0.3s ease,
+                        box-shadow 0.3s ease;
+        }
+        .tip-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(184,149,90,0.28);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.22);
+        }
+        .tip-icon {
+            font-size: 1.7rem;
+            margin-bottom: 12px;
+        }
+        .tip-title {
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+        .tip-text {
+            font-size: 0.88rem;
+            line-height: 1.58;
+        }
+
+        /* ---- NOCHE BANNER ---- */
+        .night-banner {
+            padding: 64px 40px;
+        }
+
+        /* ---- MAPA ---- */
+        .new-map-wrapper {
+            border-radius: 24px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+            overflow: hidden;
+        }
+
+        /* ---- HERO ---- */
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(184,149,90,0.45), transparent);
+        }
+
+        /* ---- FOOTER ---- */
+        footer {
+            padding: 48px 20px;
+        }
+
+        /* ---- SEPARATOR ---- */
+        .separator { padding: 30px 0; }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 900px) {
+            .stop {
+                grid-template-columns: 60px 1fr;
+                gap: 0 14px;
+            }
+            .stop-card {
+                border-radius: 16px;
+            }
+            .stop-card-inner {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+            .stop-photos {
+                border-radius: 0 0 16px 16px;
+                min-height: 220px;
+            }
+            .photo-grid, .photo-single { min-height: 220px; }
+            .hero-meta { flex-direction: column; gap: 18px; }
+            .hero-divider { width: 60px; height: 1px; }
+            .stop-info { padding: 18px 20px; }
+            .tips-grid { grid-template-columns: 1fr; }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-date">✦ Roma, Italia · Un día completo ✦</p>
+  <h1 class="hero-title">ROMA<span>Eterna</span></h1>
+  <p class="hero-subtitle">Un día entre dos hermanos, 20 horas de historia viva</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="hero-meta-num">08:00</div><div class="hero-meta-label">Llegada</div></div>
+    <div class="hero-divider"></div>
+    <div class="hero-meta-item"><div class="hero-meta-num">11</div><div class="hero-meta-label">Paradas</div></div>
+    <div class="hero-divider"></div>
+    <div class="hero-meta-item"><div class="hero-meta-num">03:40</div><div class="hero-meta-label">Bus vuelta</div></div>
+    <div class="hero-divider"></div>
+    <div class="hero-meta-item"><div class="hero-meta-num">∞</div><div class="hero-meta-label">Recuerdos</div></div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section">
+  <p class="section-label">El itinerario</p>
+  <h2 class="section-title">Nuestro día <em>perfecto</em></h2>
+
+  <!-- LLEGADA -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">08:00</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card" style="border: 1px solid rgba(184,149,90,0.2); background: rgba(184,149,90,0.04);">
+      <div style="padding:32px 40px;display:flex;align-items:center;gap:28px;min-height:100px;">
+        <span style="font-size:2.5rem;">✈️</span>
+        <div>
+          <div class="stop-type" style="color:var(--gold);">Llegada · Bus desde Rome Fiumicino Airport</div>
+          <h3 class="stop-name" style="font-size:1.3rem;margin-bottom:6px;">Roma Termini</h3>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--stone);">El bus de Rome Fiumicino Airport nos deja en Roma Termini a las 8h aprox. Desde aquí cogemos el metro línea B (dirección Laurentina) hasta la parada <strong style="color:var(--cream)">Colosseo</strong> — 4 paradas, ~10 min.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESAYUNO -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">08:00</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card" style="border-style:dashed;border-color:rgba(184,149,90,0.25);">
+      <div style="padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;text-align:center;gap:12px;">
+        <span style="font-size:2.5rem;opacity:0.4;">🥐</span>
+        <div class="stop-type" style="color:var(--gold);">Desayuno · Por confirmar</div>
+        <h3 class="stop-name" style="font-size:1.4rem;opacity:0.5;">Aquí va nuestro sitio de desayuno</h3>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--stone);font-style:italic;max-width:500px;">Un café y un cornetto cerca del hotel antes de empezar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLISEO -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">08:45</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">⚔️ Monumento histórico · ~1h45</div>
+            <h3 class="stop-name">Coliseo, Foro<br>& Palatino</h3>
+            <p class="stop-desc">El mayor anfiteatro romano del mundo merece ser el primero del día: la madrugada lo deja libre de multitudes. El ticket combinado incluye el Foro Romano y el monte Palatino, así que sacamos el máximo partido. Pasamos al menos 45 min en el Coliseo, 45 min en el Foro y 30 min en el Palatino.</p>
+          </div>
+          <div>
+            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.8 (484k reseñas)</span></div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">Ticket online</span><span class="tag tip">💡 Llegar a las 8:15</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-grid">
+            <div class="photo-grid-top">
+              <div class="photo-overlay-wrap"><img src="./fotos/coliseo.jpg" alt="Coliseo Pinterest"></div>
+            </div>
+            <div class="photo-grid-bottom">
+              <div class="photo-overlay-wrap"><img src="./fotos/coliseo2.jpg" alt="Coliseo exterior"></div>
+              <div class="photo-overlay-wrap"><img src="./fotos/coliseo3.jpg" alt="Coliseo interior"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORO ROMANO -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">10:30</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">🏛️ Ruinas · incluido con ticket Coliseo · 45 min</div>
+            <h3 class="stop-name">Foro Romano<br>& Monte Palatino</h3>
+            <p class="stop-desc">El corazón de la Roma antigua. Caminamos entre templos, arcos triunfales y la Vía Sacra. Subimos al Palatino para tener la mejor panorámica del Foro desde arriba. La app oficial gratuita nos da el contexto histórico de cada ruina.</p>
+          </div>
+          <div>
+            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.8 (141k reseñas)</span></div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">Ticket incluido</span><span class="tag tip">💡 App gratuita del Foro</span><span class="tag">Vista panorámica</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-single"><img src="./fotos/forum.jpg" alt="Foro Romano"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMIDA PLACEHOLDER -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">13:15</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card" style="border-style:dashed;border-color:rgba(184,149,90,0.25);">
+      <div style="padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;text-align:center;gap:12px;">
+        <span style="font-size:2.5rem;opacity:0.4;">🍝</span>
+        <div class="stop-type" style="color:var(--gold);">Comida · Por confirmar</div>
+        <h3 class="stop-name" style="font-size:1.4rem;opacity:0.5;">Aquí va nuestro restaurante de comida</h3>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--stone);font-style:italic;max-width:500px;">Cuando lo tengamos claro, rellenamos este hueco con el nombre y lo que pedimos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIAZZA VENEZIA -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">14:15</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">🏛️ Plaza icónica · 1h</div>
+            <h3 class="stop-name">Piazza Venezia<br>& Altare della Patria</h3>
+            <p class="stop-desc">El "pastel de bodas" de Roma. El Altare della Patria es gratuito y ofrece una terraza con las mejores vistas de la ciudad. Subimos al nivel superior (acceso gratuito) para una panorámica de 360° sobre los tejados romanos. Parada rápida pero imprescindible.</p>
+          </div>
+          <div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">Entrada gratuita</span><span class="tag tip">💡 Terraza = mejores vistas</span><span class="tag">1h</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-single"><img src="./fotos/Piaza venecia.jpg" alt="Altare della Patria"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIAZZA NAVONA -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">15:15</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">⛲ Plaza barroca · 1h</div>
+            <h3 class="stop-name">Piazza Navona</h3>
+            <p class="stop-desc">La plaza barroca más bella de Roma. La Fontana dei Cuatro Ríos de Bernini es la protagonista. Artistas callejeros, cafés con terraza y una atmósfera única a cualquier hora del día. Tomamos un café en una de las terrazas y contemplamos la fuente en calma.</p>
+          </div>
+          <div>
+            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.7 (211k reseñas)</span></div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">Acceso libre 24h</span><span class="tag tip">💡 Café en terraza con vista</span><span class="tag">Arte callejero</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-single"><img src="./fotos/piazaNavona.jpg" alt="Piazza Navona"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTEÓN -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">16:15</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">🏛️ Maravilla arquitectónica · 1h</div>
+            <h3 class="stop-name">El Panteón</h3>
+            <p class="stop-desc">El edificio antiguo mejor conservado del mundo. El óculo de 9 metros en la cúpula es pura magia arquitectónica. La audioguía (recomendada) nos revela los secretos de este prodigio de 2.000 años. El rayo de luz que entra por el óculo se mueve como un reloj de sol.</p>
+          </div>
+          <div>
+            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.8 (274k reseñas)</span></div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">~5€ online</span><span class="tag tip">💡 Entrada más temprana posible</span><span class="tag">Audioguía recomendada</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-grid">
+            <div class="photo-grid-top">
+              <div class="photo-overlay-wrap"><img src="./fotos/Pantheon🏛.jpg" alt="Interior Panteón"></div>
+            </div>
+            <div class="photo-grid-bottom">
+              <div class="photo-overlay-wrap"><img src="./fotos/pantheon2.jpg" alt="Panteón exterior"></div>
+              <div class="photo-overlay-wrap"><img src="./fotos/Pantheon3.jpg" alt="Panteón noche"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAFÉ / MERIENDA -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">16:45</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card" style="border-style:dashed;border-color:rgba(184,149,90,0.25);">
+      <div style="padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;text-align:center;gap:12px;">
+        <span style="font-size:2.5rem;opacity:0.4;">☕</span>
+        <div class="stop-type" style="color:var(--gold);">Merienda · Por confirmar</div>
+        <h3 class="stop-name" style="font-size:1.4rem;opacity:0.5;">Café & Gelato · Por elegir</h3>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--stone);font-style:italic;max-width:500px;">Pausa de café o gelato cerca del Panteón. Dos opciones clásicas: Sant'Eustachio il Caffè y Giolitti.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FONTANA DI TREVI -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">17:45</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">⛲ Fuente icónica · 1h</div>
+            <h3 class="stop-name">Fontana<br>di Trevi</h3>
+            <p class="stop-desc">La fuente más famosa del mundo aparece de golpe al doblar una esquina estrecha: ese primer impacto es emocionante. Tiramos una moneda con la mano derecha por encima del hombro izquierdo para asegurar el regreso a Roma. La tarifa de acceso al nivel inferior (2€) vale la pena para verla de cerca.</p>
+          </div>
+          <div>
+            <div class="rating"><span class="stars">★★★★★</span><span class="rating-num">4.7 (497k reseñas)</span></div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">Acceso gratuito</span><span class="tag tip">💡 Nivel inferior: 2€</span><span class="tag">Tiramos la moneda</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-grid">
+            <div class="photo-grid-top">
+              <div class="photo-overlay-wrap"><img src="./fotos/fontana.jpg" alt="Fontana di Trevi"></div>
+            </div>
+            <div class="photo-grid-bottom">
+              <div class="photo-overlay-wrap"><img src="./fotos/fontana3.jpg" alt="Fontana di Trevi noche"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIAZZA DI SPAGNA -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">18:45</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">🌸 Plaza romántica · 1h</div>
+            <h3 class="stop-name">Piazza di Spagna<br>& Scalinata</h3>
+            <p class="stop-desc">La escalinata de Trinità dei Monti es el símbolo más fotogénico de Roma. Subimos los 135 escalones para ver el atardecer sobre los tejados. En junio el sol se pone tarde — hay luz perfecta a esta hora. En la base, la Fontana della Barcaccia de Bernini es perfecta para descansar los pies.</p>
+          </div>
+          <div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">Acceso libre</span><span class="tag tip">💡 Atardecer dorado en junio</span><span class="tag">135 escalones</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-single"><img src="./fotos/piaza spagna.jpg" alt="Escalinata Roma"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VATICANO -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">19:45</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">⛪ Vaticano exterior · hasta las 21:00</div>
+            <h3 class="stop-name">Plaza de San Pedro<br>& Basílica</h3>
+            <p class="stop-desc">En junio el sol no se pone hasta las 20:30 — llegamos con la luz dorada perfecta. La Plaza de San Pedro con la columnata de Bernini es uno de los espacios más imponentes del mundo. Vemos la fachada de la Basílica, la cúpula de Miguel Ángel y el obelisco desde fuera, todo gratis y sin aglomeraciones a esa hora. De camino pasamos por el Puente de los Ángeles junto al Castel Sant'Angelo, que queda de paso.</p>
+          </div>
+          <div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag">Acceso libre exterior</span>
+              <span class="tag tip">💡 Luz dorada en junio hasta las 20:30</span>
+              <span class="tag">Trastevere a 15 min</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Fotos para recrear</div>
+          <div class="photo-grid">
+            <div class="photo-grid-top">
+              <div class="photo-overlay-wrap"><img src="./fotos/vaticano.jpg" alt="Plaza San Pedro Vaticano"></div>
+            </div>
+            <div class="photo-grid-bottom">
+              <div class="photo-overlay-wrap"><img src="./fotos/castel.jpg" alt="Castel Sant'Angelo de paso"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENA PLACEHOLDER -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">21:00</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card" style="border-style:dashed;border-color:rgba(184,149,90,0.25);">
+      <div style="padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;text-align:center;gap:12px;">
+        <span style="font-size:2.5rem;opacity:0.4;">🍷</span>
+        <div class="stop-type" style="color:var(--gold);">Cena · Por confirmar</div>
+        <h3 class="stop-name" style="font-size:1.4rem;opacity:0.5;">Aquí va nuestro restaurante de cena</h3>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--stone);font-style:italic;max-width:500px;">Cuando lo tengamos decidido, rellenamos este hueco con el nombre y lo que pedimos.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- NOCHE -->
+<div class="separator"><div class="sep-line"></div><div class="sep-diamond"></div><div class="sep-line right"></div></div>
+
+<section class="night-banner">
+  <p class="section-label" style="color:var(--gold);">La noche romana</p>
+  <h2 class="night-title">Cuando Roma se <em>despierta</em></h2>
+  <p class="night-desc">Después de cenar, Roma tiene otro ritmo. Las fuentes iluminadas y las terrazas encendidas nos esperan mientras remontamos hacia Termini.</p>
+</section>
+
+<section class="timeline-section">
+  <p class="section-label">La noche</p>
+  <h2 class="section-title">Roma <em>nocturna</em></h2>
+
+  <!-- PASEO NOCTURNO -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">23:00</div><div class="stop-dot"></div><div class="stop-line"></div></div>
+    <div class="stop-card">
+      <div class="stop-card-inner">
+        <div class="stop-info">
+          <div>
+            <div class="stop-type">🌙 Paseo nocturno · remontando al centro</div>
+            <h3 class="stop-name">Trastevere → Panteón<br>→ Trevi → Navona</h3>
+            <p class="stop-desc">Salimos de Trastevere y remontamos a pie hacia el centro, acercándonos poco a poco a Termini. El Panteón con iluminación teatral, la Fontana di Trevi sin colas, Piazza Navona con sus terracitas encendidas. Roma de noche es completamente distinta — los mismos sitios de día se transforman. Paramos donde nos apetezca y pedimos algo en los bares de las callejuelas.</p>
+          </div>
+          <div>
+            <div class="stop-tags" style="margin-top:14px;">
+              <span class="tag tip">💡 Trevi de noche = sin esperas</span>
+              <span class="tag">Paseo a pie</span>
+              <span class="tag">Negroni en Navona</span>
+            </div>
+          </div>
+        </div>
+        <div class="stop-photos">
+          <div class="photo-label">📍 Roma de noche</div>
+          <div class="photo-single"><img src="./fotos/treviNoche.jpg" alt="Trevi de noche"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VUELTA AL AEROPUERTO -->
+  <div class="stop">
+    <div class="stop-time-col"><div class="stop-time">03:30</div><div class="stop-dot"></div></div>
+    <div class="stop-card" style="border: 1px solid rgba(196,98,45,0.3); background: rgba(196,98,45,0.04);">
+      <div style="padding:32px 40px;display:flex;align-items:center;gap:28px;min-height:100px;">
+        <span style="font-size:2.5rem;">🚌</span>
+        <div>
+          <div class="stop-type" style="color:var(--terracotta);">Salida · Bus a Rome Fiumicino Airport</div>
+          <h3 class="stop-name" style="font-size:1.3rem;margin-bottom:6px;">Roma Termini · 03:40h</h3>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--stone);">Llegamos a Termini a las <strong style="color:var(--cream)">3:30</strong> con margen. El bus sale a las <strong style="color:var(--cream)">3:40</strong> hacia Rome Fiumicino Airport.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- RUTA RESUMEN -->
+<section class="map-section">
+  <p class="section-label">Resumen visual</p>
+  <h2 class="section-title">La <em>ruta</em> completa</h2>
+  <div class="route-list">
+    <div class="route-item" style="border-color:rgba(184,149,90,0.3);background:rgba(184,149,90,0.04);"><div class="route-num" style="color:var(--gold);">✈️</div><div class="route-name">Llegada · Bus Rome Fiumicino Airport</div><div class="route-time">08:00 · Roma Termini</div></div>
+    <div class="route-item"><div class="route-num">01</div><div class="route-name">🥐 Desayuno · Por confirmar</div><div class="route-time">08:00 — 08:30</div></div>
+    <div class="route-item"><div class="route-num">02</div><div class="route-name">Coliseo</div><div class="route-time">08:45 — 10:30 · 1h45</div></div>
+    <div class="route-item"><div class="route-num">03</div><div class="route-name">Foro Romano & Monte Palatino</div><div class="route-time">10:30 — 11:15 · 45 min</div></div>
+    <div class="route-item"><div class="route-num">04</div><div class="route-name">🍝 Comida · Por confirmar</div><div class="route-time">13:15 — 14:15 · 1h</div></div>
+    <div class="route-item"><div class="route-num">05</div><div class="route-name">Piazza Venezia · Altare della Patria</div><div class="route-time">14:15 — 15:15 · 1h</div></div>
+    <div class="route-item"><div class="route-num">06</div><div class="route-name">Piazza Navona</div><div class="route-time">15:15 — 16:15 · 1h</div></div>
+    <div class="route-item"><div class="route-num">07</div><div class="route-name">El Panteón</div><div class="route-time">16:15 — 17:15 · 1h</div></div>
+    <div class="route-item"><div class="route-num">08</div><div class="route-name">☕ Merienda · Por confirmar</div><div class="route-time">16:45 — 17:45 · 1h</div></div>
+    <div class="route-item"><div class="route-num">09</div><div class="route-name">Fontana di Trevi</div><div class="route-time">17:45 — 18:45 · 1h</div></div>
+    <div class="route-item"><div class="route-num">10</div><div class="route-name">Piazza di Spagna</div><div class="route-time">18:45 — 19:45 · 1h</div></div>
+    <div class="route-item"><div class="route-num">11</div><div class="route-name">⛪ Vaticano · Plaza de San Pedro</div><div class="route-time">19:45 — 21:00 · 1h15</div></div>
+    <div class="route-item"><div class="route-num">12</div><div class="route-name">🍷 Cena · Por confirmar</div><div class="route-time">21:00 — 23:00 · 2h</div></div>
+    <div class="route-item"><div class="route-num">13</div><div class="route-name">🌙 Paseo nocturno Trastevere→Trevi→Navona</div><div class="route-time">23:00 — 03:00</div></div>
+    <div class="route-item" style="border-color:rgba(196,98,45,0.3);background:rgba(196,98,45,0.04);"><div class="route-num" style="color:var(--terracotta);">🚌</div><div class="route-name">Bus Rome Fiumicino Airport</div><div class="route-time">03:40 · Roma Termini</div></div>
+  </div>
+</section>
+
+<!-- TIPS -->
+<section class="tips-section">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p class="section-label">Consejos clave</p>
+    <h2 class="section-title">Para que <em>nada</em> falle</h2>
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card"><span class="tip-icon">🎟️</span><div class="tip-title">Reserva todo online</div><p class="tip-text">Compramos los tickets del Coliseo y el Panteón con al menos 3-4 días de antelación. Las colas sin reserva pueden superar las 2 horas en temporada alta.</p></div>
+    <div class="tip-card"><span class="tip-icon">👟</span><div class="tip-title">Calzado cómodo</div><p class="tip-text">El adoquinado romano (sampietrini) es traicionero. Usamos zapatillas cómodas, no sandalias. Caminaremos fácilmente 20-25 km durante el día.</p></div>
+    <div class="tip-card"><span class="tip-icon">💧</span><div class="tip-title">Agua gratuita</div><p class="tip-text">Roma tiene cientos de fuentes públicas (nasoni) con agua potable fresquísima. Llevamos una botella reutilizable para ahorrar dinero y plásticos.</p></div>
+    <div class="tip-card"><span class="tip-icon">📱</span><div class="tip-title">Google Maps offline</div><p class="tip-text">Descargamos el mapa de Roma offline. El centro histórico tiene callejones sin señal. La app "Colosseum" del Foro también merece la descarga.</p></div>
+    <div class="tip-card"><span class="tip-icon">🚇</span><div class="tip-title">Metro solo para el Coliseo</div><p class="tip-text">El centro histórico se recorre perfectamente a pie. El metro solo es útil para llegar al Coliseo (línea B, parada Colosseo).</p></div>
+    <div class="tip-card"><span class="tip-icon">🍦</span><div class="tip-title">Gelato auténtico</div><p class="tip-text">Evitamos las gelaterie con colores fluorescentes y montañas de helado. El helado artesanal está cubierto con tapas metálicas. Giolitti o Il Gelato di San Crispino son fiables.</p></div>
+    <div class="tip-card"><span class="tip-icon">💶</span><div class="tip-title">Presupuesto estimado</div><p class="tip-text">Coliseo+Foro ~18€, Panteón ~5€, Comida ~25€, Cena ~40€, Gelato+café ~8€, Copas ~20€. Total: ~120€/persona para un día completo.</p></div>
+    <div class="tip-card"><span class="tip-icon">☀️</span><div class="tip-title">Junio: luz hasta las 20:30</div><p class="tip-text">En junio Roma tiene luz natural hasta muy tarde. El Vaticano a las 19:45 y la Scalinata di Spagna lo aprovechamos con luz dorada perfecta.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     MAPA INTERACTIVO — VERSIÓN MEJORADA
+══════════════════════════════════════════════════════ -->
+<section style="padding: 80px 20px; background: var(--night); border-top: 1px solid rgba(255,255,255,0.06);">
+  <div style="max-width:1100px; margin:0 auto;">
+    <p class="section-label">El recorrido</p>
+    <h2 class="section-title">Nuestro mapa <em>del día</em></h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--stone);margin-bottom:40px;font-style:italic;">Pulsa cualquier parada para ver los detalles. Haz hover sobre los pines del mapa para ver la información de cada lugar.</p>
+
+    <div class="new-map-wrapper">
+      <div class="new-map-header">
+        <span class="new-map-header-title">Roma Eterna</span>
+        <span class="new-map-header-sub">✦ Itinerario completo · Un día</span>
+      </div>
+
+      <div class="new-map-body">
+        <!-- CANVAS DEL MAPA -->
+        <div class="new-map-canvas" id="mapCanvas">
+          <svg viewBox="0 0 660 560" xmlns="http://www.w3.org/2000/svg" id="romaSvg">
+            <defs>
+              <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M2 2L8 5L2 8" fill="none" stroke="#B8955A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+              <filter id="glow2">
+                <feGaussianBlur stdDeviation="3" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <pattern id="mapgrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <line x1="40" y1="0" x2="0" y2="0" stroke="rgba(255,255,255,0.018)" stroke-width="0.5"/>
+                <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(255,255,255,0.018)" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+
+            <!-- Fondo -->
+            <rect width="660" height="560" fill="#0c0905"/>
+            <rect width="660" height="560" fill="url(#mapgrid)"/>
+            <ellipse cx="330" cy="280" rx="300" ry="240" fill="rgba(184,149,90,0.025)"/>
+
+            <!-- ── Manzanas urbanas ── -->
+            <!-- Zona Coliseo -->
+            <rect x="470" y="340" width="70" height="45" rx="3" fill="rgba(255,255,255,0.022)"/>
+            <rect x="550" y="340" width="55" height="45" rx="3" fill="rgba(255,255,255,0.016)"/>
+            <rect x="470" y="395" width="45" height="38" rx="3" fill="rgba(255,255,255,0.018)"/>
+            <rect x="522" y="395" width="83" height="38" rx="3" fill="rgba(255,255,255,0.013)"/>
+            <rect x="430" y="370" width="35" height="30" rx="3" fill="rgba(255,255,255,0.016)"/>
+            <!-- Zona centro Navona/Panteón -->
+            <rect x="245" y="195" width="65" height="42" rx="3" fill="rgba(255,255,255,0.022)"/>
+            <rect x="318" y="195" width="50" height="42" rx="3" fill="rgba(255,255,255,0.016)"/>
+            <rect x="245" y="244" width="45" height="35" rx="3" fill="rgba(255,255,255,0.018)"/>
+            <rect x="296" y="244" width="72" height="35" rx="3" fill="rgba(255,255,255,0.013)"/>
+            <rect x="380" y="195" width="58" height="45" rx="3" fill="rgba(255,255,255,0.019)"/>
+            <rect x="245" y="285" width="60" height="35" rx="3" fill="rgba(255,255,255,0.016)"/>
+            <rect x="312" y="285" width="70" height="35" rx="3" fill="rgba(255,255,255,0.013)"/>
+            <!-- Zona Trevi/Spagna -->
+            <rect x="360" y="130" width="62" height="40" rx="3" fill="rgba(255,255,255,0.02)"/>
+            <rect x="430" y="130" width="50" height="40" rx="3" fill="rgba(255,255,255,0.015)"/>
+            <rect x="360" y="178" width="45" height="32" rx="3" fill="rgba(255,255,255,0.018)"/>
+            <rect x="412" y="178" width="68" height="32" rx="3" fill="rgba(255,255,255,0.013)"/>
+            <rect x="360" y="80" width="70" height="40" rx="3" fill="rgba(255,255,255,0.018)"/>
+            <rect x="440" y="80" width="55" height="40" rx="3" fill="rgba(255,255,255,0.014)"/>
+            <!-- Zona Vaticano -->
+            <rect x="55" y="140" width="75" height="50" rx="3" fill="rgba(255,255,255,0.02)"/>
+            <rect x="55" y="200" width="75" height="42" rx="3" fill="rgba(255,255,255,0.015)"/>
+            <rect x="140" y="140" width="55" height="50" rx="3" fill="rgba(255,255,255,0.016)"/>
+            <rect x="140" y="200" width="55" height="42" rx="3" fill="rgba(255,255,255,0.012)"/>
+            <!-- Zona Piazza Venezia -->
+            <rect x="318" y="290" width="58" height="40" rx="3" fill="rgba(255,255,255,0.02)"/>
+            <rect x="383" y="290" width="48" height="40" rx="3" fill="rgba(255,255,255,0.015)"/>
+            <rect x="318" y="337" width="45" height="35" rx="3" fill="rgba(255,255,255,0.017)"/>
+            <!-- Zona Trastevere -->
+            <rect x="130" y="360" width="68" height="50" rx="3" fill="rgba(255,255,255,0.022)"/>
+            <rect x="206" y="360" width="52" height="50" rx="3" fill="rgba(255,255,255,0.016)"/>
+            <rect x="130" y="418" width="45" height="38" rx="3" fill="rgba(255,255,255,0.018)"/>
+            <rect x="182" y="418" width="76" height="38" rx="3" fill="rgba(255,255,255,0.013)"/>
+            <!-- Termini -->
+            <rect x="560" y="155" width="80" height="55" rx="3" fill="rgba(255,255,255,0.022)"/>
+            <rect x="560" y="218" width="80" height="45" rx="3" fill="rgba(255,255,255,0.016)"/>
+            <rect x="570" y="270" width="60" height="35" rx="3" fill="rgba(255,255,255,0.014)"/>
+
+            <!-- ── Calles principales ── -->
+            <path d="M 330 30 L 325 560" stroke="rgba(255,255,255,0.055)" stroke-width="5" fill="none"/>
+            <path d="M 330 30 L 325 560" stroke="rgba(255,255,255,0.035)" stroke-width="8" fill="none"/>
+            <path d="M 0 295 Q 200 285 400 290 Q 550 295 660 288" stroke="rgba(255,255,255,0.045)" stroke-width="5" fill="none"/>
+            <path d="M 0 295 Q 200 285 400 290 Q 550 295 660 288" stroke="rgba(255,255,255,0.028)" stroke-width="8" fill="none"/>
+            <path d="M 330 290 Q 350 240 390 185 Q 415 155 425 130" stroke="rgba(255,255,255,0.035)" stroke-width="4" fill="none"/>
+            <path d="M 130 175 Q 155 175 175 175" stroke="rgba(255,255,255,0.038)" stroke-width="4" fill="none"/>
+            <path d="M 430 295 Q 460 320 490 350 Q 510 370 505 395" stroke="rgba(255,255,255,0.03)" stroke-width="3.5" fill="none"/>
+            <path d="M 505 395 Q 530 420 555 460 Q 570 490 580 530" stroke="rgba(255,255,255,0.022)" stroke-width="3" fill="none"/>
+            <path d="M 50 30 Q 110 90 150 130 Q 185 165 200 200 Q 215 240 220 280 Q 225 320 235 360 Q 248 410 270 460 Q 285 495 305 530" stroke="rgba(255,255,255,0.028)" stroke-width="3" fill="none"/>
+
+            <!-- ── Río Tíber ── -->
+            <path d="M 40 25 Q 90 75 120 115 Q 155 158 165 200 Q 178 248 182 290 Q 188 340 200 385 Q 215 432 240 475 Q 258 508 278 540"
+                  stroke="#0a1e33" stroke-width="36" fill="none"/>
+            <path d="M 40 25 Q 90 75 120 115 Q 155 158 165 200 Q 178 248 182 290 Q 188 340 200 385 Q 215 432 240 475 Q 258 508 278 540"
+                  stroke="#0d2540" stroke-width="26" fill="none"/>
+            <path d="M 40 25 Q 90 75 120 115 Q 155 158 165 200 Q 178 248 182 290 Q 188 340 200 385 Q 215 432 240 475 Q 258 508 278 540"
+                  stroke="#0f2d4a" stroke-width="16" fill="none"/>
+            <path d="M 55 42 Q 100 82 128 118" stroke="rgba(40,100,180,0.25)" stroke-width="2" fill="none"/>
+            <path d="M 170 208 Q 182 256 185 296" stroke="rgba(40,100,180,0.2)" stroke-width="1.5" fill="none"/>
+            <text x="108" y="295" fill="rgba(30,80,140,0.5)" font-size="9.5" font-family="Montserrat,sans-serif"
+                  transform="rotate(-72,108,295)" letter-spacing="2.8">TEVERE</text>
+            <!-- Puente de los Ángeles -->
+            <rect x="188" y="279" width="40" height="8" rx="2" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+            <text x="230" y="278" fill="rgba(245,239,230,0.22)" font-size="7.5" font-family="Montserrat,sans-serif" letter-spacing="0.8">Pto. Ángeles</text>
+
+            <!-- ── Ruta animada ── -->
+            <style>
+              @keyframes routeFlow { to { stroke-dashoffset: -48; } }
+            </style>
+            <path d="M 600 182 L 600 290 L 505 360"
+                  stroke="rgba(184,149,90,0.25)" stroke-width="2" fill="none" stroke-dasharray="7 5"
+                  style="animation: routeFlow 4s linear infinite;"/>
+            <path d="M 505 360 L 455 360 L 360 308 L 280 235 L 295 215"
+                  stroke="rgba(184,149,90,0.25)" stroke-width="2" fill="none" stroke-dasharray="7 5"
+                  style="animation: routeFlow 4s linear infinite 0.8s;"/>
+            <path d="M 295 215 L 390 158 L 390 98"
+                  stroke="rgba(184,149,90,0.25)" stroke-width="2" fill="none" stroke-dasharray="7 5"
+                  style="animation: routeFlow 4s linear infinite 1.6s;"/>
+            <path d="M 390 98 L 200 98 L 108 165 L 168 388"
+                  stroke="rgba(184,149,90,0.25)" stroke-width="2" fill="none" stroke-dasharray="7 5"
+                  style="animation: routeFlow 4s linear infinite 2.4s;"/>
+            <path d="M 168 388 L 295 215 L 390 158 L 600 182"
+                  stroke="rgba(184,149,90,0.12)" stroke-width="1.5" fill="none" stroke-dasharray="5 8"
+                  style="animation: routeFlow 6s linear infinite 1s;"/>
+
+            <!-- ══ PINS ══ -->
+
+            <!-- TERMINI -->
+            <g class="map-pin" data-id="termini" style="cursor:pointer" transform="translate(600,182)">
+              <circle r="26" fill="rgba(184,149,90,0.1)" stroke="rgba(184,149,90,0.35)" stroke-width="1" stroke-dasharray="5 3"/>
+              <circle r="16" fill="rgba(26,20,16,0.95)" stroke="#B8955A" stroke-width="1.5"/>
+              <rect x="-7" y="-5" width="14" height="10" rx="2" fill="#B8955A"/>
+              <rect x="-5" y="-8" width="10" height="4" rx="1" fill="#B8955A"/>
+              <circle cx="-4" cy="6" r="2.2" fill="#B8955A"/>
+              <circle cx="4" cy="6" r="2.2" fill="#B8955A"/>
+              <text x="0" y="30" text-anchor="middle" fill="rgba(184,149,90,0.7)"
+                    font-size="8" font-family="Montserrat,sans-serif" letter-spacing="0.8" font-weight="600">TERMINI</text>
+            </g>
+
+            <!-- 01 COLISEO -->
+            <g class="map-pin" data-id="coliseo" style="cursor:pointer" transform="translate(505,358)">
+              <circle r="28" fill="rgba(196,98,45,0.12)" stroke="rgba(196,98,45,0.2)" stroke-width="1"/>
+              <circle r="18" fill="rgba(196,98,45,0.22)" stroke="#C4622D" stroke-width="2" filter="url(#glow2)"/>
+              <ellipse cx="0" cy="2" rx="11" ry="8" fill="none" stroke="#C4622D" stroke-width="2"/>
+              <ellipse cx="0" cy="2" rx="7" ry="4.5" fill="none" stroke="#C4622D" stroke-width="1.2"/>
+              <line x1="-3" y1="-6" x2="-3" y2="10" stroke="#C4622D" stroke-width="1.2"/>
+              <line x1="3" y1="-6" x2="3" y2="10" stroke="#C4622D" stroke-width="1.2"/>
+              <rect x="-12" y="-8" width="24" height="3" rx="1" fill="#C4622D" opacity="0.7"/>
+              <text x="0" y="33" text-anchor="middle" fill="#C4622D"
+                    font-size="8.5" font-family="Montserrat,sans-serif" letter-spacing="0.5" font-weight="700">01 · COLISEO</text>
+            </g>
+
+            <!-- 02 FORO -->
+            <g class="map-pin" data-id="foro" style="cursor:pointer" transform="translate(455,360)">
+              <circle r="20" fill="rgba(196,98,45,0.1)" stroke="rgba(196,98,45,0.2)" stroke-width="1"/>
+              <circle r="12" fill="rgba(196,98,45,0.18)" stroke="#C4622D" stroke-width="1.5"/>
+              <rect x="-7" y="-5" width="14" height="2" rx="1" fill="#C4622D"/>
+              <rect x="-3" y="-3" width="2" height="7" fill="#C4622D"/>
+              <rect x="1" y="-3" width="2" height="7" fill="#C4622D"/>
+              <rect x="-7" y="4" width="14" height="2" rx="1" fill="#C4622D"/>
+              <text x="0" y="27" text-anchor="middle" fill="rgba(196,98,45,0.7)"
+                    font-size="7.5" font-family="Montserrat,sans-serif" letter-spacing="0.4">02 · FORO</text>
+            </g>
+
+            <!-- COMIDA placeholder -->
+            <g class="map-pin" data-id="comida" style="cursor:pointer" transform="translate(413,340)">
+              <circle r="14" fill="rgba(10,8,5,0.9)" stroke="rgba(184,149,90,0.4)" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="0" y="4" text-anchor="middle" font-size="13" fill="rgba(184,149,90,0.55)">?</text>
+              <text x="0" y="24" text-anchor="middle" fill="rgba(184,149,90,0.45)"
+                    font-size="7" font-family="Montserrat,sans-serif" letter-spacing="0.4">COMIDA</text>
+            </g>
+
+            <!-- 03 P.VENEZIA -->
+            <g class="map-pin" data-id="venezia" style="cursor:pointer" transform="translate(360,308)">
+              <circle r="22" fill="rgba(196,98,45,0.1)" stroke="rgba(196,98,45,0.2)" stroke-width="1"/>
+              <circle r="14" fill="rgba(196,98,45,0.18)" stroke="#C4622D" stroke-width="1.5"/>
+              <rect x="-8" y="2" width="16" height="2.5" rx="1" fill="#C4622D"/>
+              <rect x="-6" y="-1" width="12" height="2.5" rx="1" fill="#C4622D"/>
+              <rect x="-4.5" y="-4" width="9" height="2.5" rx="1" fill="#C4622D"/>
+              <rect x="-3" y="-7" width="6" height="2.5" rx="1" fill="#C4622D"/>
+              <text x="0" y="29" text-anchor="middle" fill="rgba(196,98,45,0.7)"
+                    font-size="7.5" font-family="Montserrat,sans-serif" letter-spacing="0.4">03 · P.VENEZIA</text>
+            </g>
+
+            <!-- 04 P.NAVONA -->
+            <g class="map-pin" data-id="navona" style="cursor:pointer" transform="translate(280,235)">
+              <circle r="22" fill="rgba(196,98,45,0.1)" stroke="rgba(196,98,45,0.2)" stroke-width="1"/>
+              <circle r="14" fill="rgba(196,98,45,0.18)" stroke="#C4622D" stroke-width="1.5"/>
+              <ellipse cx="0" cy="5" rx="8" ry="3" fill="none" stroke="#C4622D" stroke-width="1.5"/>
+              <line x1="0" y1="-7" x2="0" y2="5" stroke="#C4622D" stroke-width="1.5"/>
+              <path d="M-5 -4 Q0 -12 5 -4" fill="none" stroke="#C4622D" stroke-width="1.2"/>
+              <text x="0" y="29" text-anchor="middle" fill="rgba(196,98,45,0.7)"
+                    font-size="7.5" font-family="Montserrat,sans-serif" letter-spacing="0.4">04 · NAVONA</text>
+            </g>
+
+            <!-- 05 PANTEÓN -->
+            <g class="map-pin" data-id="panteon" style="cursor:pointer" transform="translate(295,213)">
+              <circle r="22" fill="rgba(196,98,45,0.1)" stroke="rgba(196,98,45,0.2)" stroke-width="1"/>
+              <circle r="14" fill="rgba(196,98,45,0.18)" stroke="#C4622D" stroke-width="1.5"/>
+              <path d="M-9 5 Q0 -9 9 5" fill="none" stroke="#C4622D" stroke-width="2"/>
+              <rect x="-9" y="4" width="18" height="2.5" rx="1" fill="#C4622D"/>
+              <line x1="-5" y1="4" x2="-5" y2="7" stroke="#C4622D" stroke-width="1.2"/>
+              <line x1="0" y1="4" x2="0" y2="7" stroke="#C4622D" stroke-width="1.2"/>
+              <line x1="5" y1="4" x2="5" y2="7" stroke="#C4622D" stroke-width="1.2"/>
+              <text x="0" y="29" text-anchor="middle" fill="rgba(196,98,45,0.7)"
+                    font-size="7.5" font-family="Montserrat,sans-serif" letter-spacing="0.4">05 · PANTEÓN</text>
+            </g>
+
+            <!-- MERIENDA placeholder -->
+            <g class="map-pin" data-id="merienda" style="cursor:pointer" transform="translate(325,200)">
+              <circle r="12" fill="rgba(10,8,5,0.9)" stroke="rgba(184,149,90,0.35)" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="0" y="4" text-anchor="middle" font-size="11" fill="rgba(184,149,90,0.5)">?</text>
+              <text x="0" y="21" text-anchor="middle" fill="rgba(184,149,90,0.4)"
+                    font-size="6.5" font-family="Montserrat,sans-serif" letter-spacing="0.4">CAFÉ</text>
+            </g>
+
+            <!-- 06 TREVI -->
+            <g class="map-pin" data-id="trevi" style="cursor:pointer" transform="translate(390,158)">
+              <circle r="26" fill="rgba(196,98,45,0.12)" stroke="rgba(196,98,45,0.22)" stroke-width="1"/>
+              <circle r="16" fill="rgba(196,98,45,0.22)" stroke="#C4622D" stroke-width="2" filter="url(#glow2)"/>
+              <path d="M-8 3 Q-4 -3 0 3 Q4 9 8 3" fill="none" stroke="#C4622D" stroke-width="2"/>
+              <path d="M-6 -5 Q0 -13 6 -5" fill="none" stroke="#C4622D" stroke-width="1.8"/>
+              <line x1="0" y1="-13" x2="0" y2="-5" stroke="#C4622D" stroke-width="1.5"/>
+              <text x="0" y="31" text-anchor="middle" fill="#C4622D"
+                    font-size="8.5" font-family="Montserrat,sans-serif" letter-spacing="0.5" font-weight="700">06 · TREVI</text>
+            </g>
+
+            <!-- 07 P.SPAGNA -->
+            <g class="map-pin" data-id="spagna" style="cursor:pointer" transform="translate(390,96)">
+              <circle r="22" fill="rgba(196,98,45,0.1)" stroke="rgba(196,98,45,0.2)" stroke-width="1"/>
+              <circle r="14" fill="rgba(196,98,45,0.18)" stroke="#C4622D" stroke-width="1.5"/>
+              <line x1="-7" y1="6" x2="7" y2="6" stroke="#C4622D" stroke-width="2"/>
+              <line x1="-5" y1="2" x2="5" y2="2" stroke="#C4622D" stroke-width="2"/>
+              <line x1="-3" y1="-2" x2="3" y2="-2" stroke="#C4622D" stroke-width="2"/>
+              <line x1="-1" y1="-6" x2="1" y2="-6" stroke="#C4622D" stroke-width="2"/>
+              <text x="0" y="30" text-anchor="middle" fill="rgba(196,98,45,0.7)"
+                    font-size="7.5" font-family="Montserrat,sans-serif" letter-spacing="0.4">07 · SPAGNA</text>
+            </g>
+
+            <!-- 08 VATICANO -->
+            <g class="map-pin" data-id="vaticano" style="cursor:pointer" transform="translate(108,165)">
+              <circle r="26" fill="rgba(196,98,45,0.12)" stroke="rgba(196,98,45,0.22)" stroke-width="1"/>
+              <circle r="16" fill="rgba(196,98,45,0.22)" stroke="#C4622D" stroke-width="2" filter="url(#glow2)"/>
+              <path d="M-9 6 Q0 -10 9 6" fill="none" stroke="#C4622D" stroke-width="2.2"/>
+              <rect x="-9" y="5" width="18" height="2.5" rx="1" fill="#C4622D"/>
+              <line x1="0" y1="-10" x2="0" y2="-15" stroke="#C4622D" stroke-width="1.8"/>
+              <line x1="-2.5" y1="-13" x2="2.5" y2="-13" stroke="#C4622D" stroke-width="1.8"/>
+              <text x="0" y="32" text-anchor="middle" fill="#C4622D"
+                    font-size="8.5" font-family="Montserrat,sans-serif" letter-spacing="0.5" font-weight="700">08 · VATICANO</text>
+            </g>
+
+            <!-- 09 TRASTEVERE / CENA -->
+            <g class="map-pin" data-id="trastevere" style="cursor:pointer" transform="translate(168,388)">
+              <circle r="26" fill="rgba(184,149,90,0.12)" stroke="rgba(184,149,90,0.35)" stroke-width="1.5"/>
+              <circle r="16" fill="rgba(184,149,90,0.18)" stroke="#B8955A" stroke-width="2" filter="url(#glow2)"/>
+              <path d="M-5 -9 Q-6 -3 0 2 Q6 -3 5 -9Z" fill="none" stroke="#B8955A" stroke-width="1.8"/>
+              <line x1="0" y1="2" x2="0" y2="8" stroke="#B8955A" stroke-width="1.8"/>
+              <line x1="-4" y1="8" x2="4" y2="8" stroke="#B8955A" stroke-width="1.8"/>
+              <text x="0" y="33" text-anchor="middle" fill="#B8955A"
+                    font-size="8.5" font-family="Montserrat,sans-serif" letter-spacing="0.5" font-weight="700">09 · TRASTEVERE</text>
+            </g>
+
+            <!-- NOCHE -->
+            <g class="map-pin" data-id="noche" style="cursor:pointer" transform="translate(310,155)">
+              <circle r="14" fill="rgba(184,149,90,0.06)" stroke="rgba(184,149,90,0.25)" stroke-width="0.8" stroke-dasharray="4 3"/>
+              <text x="0" y="3" text-anchor="middle" font-size="10" fill="rgba(184,149,90,0.45)">✦</text>
+              <text x="0" y="23" text-anchor="middle" fill="rgba(184,149,90,0.35)"
+                    font-size="7" font-family="Montserrat,sans-serif" letter-spacing="0.5">NOCHE</text>
+            </g>
+
+            <!-- Brújula -->
+            <g transform="translate(626, 520)">
+              <circle cx="0" cy="0" r="20" fill="rgba(0,0,0,0.45)" stroke="rgba(184,149,90,0.28)" stroke-width="0.8"/>
+              <circle cx="0" cy="0" r="2" fill="rgba(184,149,90,0.4)"/>
+              <path d="M0 -14 L3.5 4 L0 2 L-3.5 4Z" fill="#C4622D" opacity="0.8"/>
+              <path d="M0 14 L3.5 -4 L0 -2 L-3.5 -4Z" fill="rgba(255,255,255,0.15)"/>
+              <text x="0" y="-17" text-anchor="middle" fill="rgba(245,239,230,0.45)" font-size="8.5" font-family="Montserrat,sans-serif" font-weight="600">N</text>
+            </g>
+
+            <!-- Escala -->
+            <g transform="translate(28, 530)">
+              <line x1="0" y1="0" x2="40" y2="0" stroke="rgba(184,149,90,0.4)" stroke-width="1.5"/>
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="rgba(184,149,90,0.4)" stroke-width="1.5"/>
+              <line x1="40" y1="-4" x2="40" y2="4" stroke="rgba(184,149,90,0.4)" stroke-width="1.5"/>
+              <text x="20" y="-8" text-anchor="middle" fill="rgba(184,149,90,0.4)" font-size="7.5" font-family="Montserrat,sans-serif" letter-spacing="0.8">~1 km</text>
+            </g>
+
+          </svg>
+
+          <!-- Tooltip -->
+          <div class="map-tooltip" id="mapTooltip">
+            <div class="tooltip-name" id="ttName"></div>
+            <div class="tooltip-time" id="ttTime"></div>
+            <div class="tooltip-tip" id="ttTip"></div>
+          </div>
+        </div>
+
+        <!-- PANEL LATERAL -->
+        <div class="new-map-panel">
+          <p class="panel-intro">Pulsa cualquier parada para ver los detalles.</p>
+          <div class="panel-stops" id="panelStops">
+
+            <div class="divider-label">Llegada · Mañana</div>
+            <div class="stop-list-item" data-id="termini">
+              <span class="stop-list-num">✈️</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Roma Termini</div>
+                <span class="stop-list-time">08:00 · Bus Fiumicino</span>
+              </div>
+            </div>
+            <div class="stop-list-item placeholder" data-id="desayuno">
+              <span class="stop-list-num">🥐</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Desayuno · Por confirmar</div>
+                <span class="stop-list-time">08:00 — 08:30</span>
+              </div>
+            </div>
+
+            <div class="divider-label">Mañana · Zona arqueológica</div>
+            <div class="stop-list-item" data-id="coliseo">
+              <span class="stop-list-num">01</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Coliseo</div>
+                <span class="stop-list-time">08:45 — 10:30 · 1h45</span>
+              </div>
+            </div>
+            <div class="stop-list-item" data-id="foro">
+              <span class="stop-list-num">02</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Foro Romano & Palatino</div>
+                <span class="stop-list-time">10:30 — 11:15 · 45 min</span>
+              </div>
+            </div>
+
+            <div class="divider-label">Mediodía</div>
+            <div class="stop-list-item placeholder" data-id="comida">
+              <span class="stop-list-num">🍝</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Comida · Por confirmar</div>
+                <span class="stop-list-time">13:15 — 14:15 · 1h</span>
+              </div>
+            </div>
+
+            <div class="divider-label">Tarde · Centro histórico</div>
+            <div class="stop-list-item" data-id="venezia">
+              <span class="stop-list-num">03</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Piazza Venezia</div>
+                <span class="stop-list-time">14:15 — 15:15 · 1h</span>
+              </div>
+            </div>
+            <div class="stop-list-item" data-id="navona">
+              <span class="stop-list-num">04</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Piazza Navona</div>
+                <span class="stop-list-time">15:15 — 16:15 · 1h</span>
+              </div>
+            </div>
+            <div class="stop-list-item" data-id="panteon">
+              <span class="stop-list-num">05</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">El Panteón</div>
+                <span class="stop-list-time">16:15 — 17:15 · 1h</span>
+              </div>
+            </div>
+            <div class="stop-list-item placeholder" data-id="merienda">
+              <span class="stop-list-num">☕</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Café & Gelato · Por confirmar</div>
+                <span class="stop-list-time">16:45 — 17:45 · 1h</span>
+              </div>
+            </div>
+
+            <div class="divider-label">Atardecer</div>
+            <div class="stop-list-item" data-id="trevi">
+              <span class="stop-list-num">06</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Fontana di Trevi</div>
+                <span class="stop-list-time">17:45 — 18:45 · 1h</span>
+              </div>
+            </div>
+            <div class="stop-list-item" data-id="spagna">
+              <span class="stop-list-num">07</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Piazza di Spagna</div>
+                <span class="stop-list-time">18:45 — 19:45 · 1h</span>
+              </div>
+            </div>
+            <div class="stop-list-item" data-id="vaticano">
+              <span class="stop-list-num">08</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Vaticano · San Pedro</div>
+                <span class="stop-list-time">19:45 — 21:00 · luz dorada</span>
+              </div>
+            </div>
+
+            <div class="divider-label">Noche · Trastevere & paseo</div>
+            <div class="stop-list-item" data-id="trastevere">
+              <span class="stop-list-num">09</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Cena & Trastevere</div>
+                <span class="stop-list-time">21:00 — 23:00</span>
+              </div>
+            </div>
+            <div class="stop-list-item" data-id="noche">
+              <span class="stop-list-num">🌙</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Paseo nocturno</div>
+                <span class="stop-list-time">23:00 — 03:00 · Trevi, Navona</span>
+              </div>
+            </div>
+
+            <div class="divider-label">Vuelta</div>
+            <div class="stop-list-item" data-id="termini" style="opacity:0.7">
+              <span class="stop-list-num">🚌</span>
+              <div class="stop-list-text">
+                <div class="stop-list-name">Termini · Salida</div>
+                <span class="stop-list-time">03:40 · Bus Fiumicino</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="map-legend-bar">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#C4622D;"></div>
+              <span>Parada</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:rgba(184,149,90,0.4);border:1px dashed #B8955A;"></div>
+              <span>Por confirmar</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:rgba(184,149,90,0.15);border:1px dashed #B8955A;width:16px;border-radius:2px;"></div>
+              <span>Ruta</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /new-map-wrapper -->
+
+  </div>
+</section>
+
+<script>
+(function() {
+  const stopData = {
+    termini: {
+      name: "Roma Termini",
+      time: "08:00 · Llegada / 03:40 · Salida",
+      tip: "Metro línea B (dir. Laurentina) hasta parada Colosseo — 4 paradas, ~10 min."
+    },
+    coliseo: {
+      name: "01 · Coliseo",
+      time: "08:45 — 10:30 · 1h45",
+      tip: "★★★★★ Llegar a las 8:15. Ticket online incluye Foro y Palatino."
+    },
+    foro: {
+      name: "02 · Foro Romano & Palatino",
+      time: "10:30 — 11:15 · 45 min",
+      tip: "Incluido con el ticket del Coliseo. App gratuita del Foro recomendada."
+    },
+    comida: {
+      name: "🍝 Comida · Por confirmar",
+      time: "13:15 — 14:15 · 1h",
+      tip: "Hueco por rellenar cuando elijamos el restaurante."
+    },
+    venezia: {
+      name: "03 · Piazza Venezia",
+      time: "14:15 — 15:15 · 1h",
+      tip: "Altare della Patria gratuito. Terraza = mejores vistas 360° de Roma."
+    },
+    navona: {
+      name: "04 · Piazza Navona",
+      time: "15:15 — 16:15 · 1h",
+      tip: "★★★★★ La Fontana dei Cuatro Ríos de Bernini. Café en terraza con vista."
+    },
+    panteon: {
+      name: "05 · El Panteón",
+      time: "16:15 — 17:15 · 1h",
+      tip: "★★★★★ ~5€ online. El edificio antiguo mejor conservado del mundo."
+    },
+    merienda: {
+      name: "☕ Café & Gelato · Por confirmar",
+      time: "16:45 — 17:45",
+      tip: "Sant'Eustachio il Caffè o Giolitti son opciones clásicas cerca del Panteón."
+    },
+    trevi: {
+      name: "06 · Fontana di Trevi",
+      time: "17:45 — 18:45 · 1h",
+      tip: "★★★★★ Nivel inferior 2€. Tirar moneda: mano dcha. por encima del hombro izq."
+    },
+    spagna: {
+      name: "07 · Piazza di Spagna",
+      time: "18:45 — 19:45 · 1h",
+      tip: "Acceso libre. Subir los 135 escalones para ver el atardecer dorado de junio."
+    },
+    vaticano: {
+      name: "08 · Vaticano · Plaza de San Pedro",
+      time: "19:45 — 21:00 · luz dorada hasta las 20:30",
+      tip: "Acceso libre al exterior. Pasamos por el Puente de los Ángeles de camino."
+    },
+    trastevere: {
+      name: "09 · Cena & Trastevere",
+      time: "21:00 — 23:00",
+      tip: "Cena por confirmar. El barrio más animado de Roma de noche."
+    },
+    noche: {
+      name: "🌙 Paseo nocturno",
+      time: "23:00 — 03:00",
+      tip: "Trevi sin colas, Navona con terracitas, Panteón iluminado. Roma es otra de noche."
+    },
+    desayuno: {
+      name: "🥐 Desayuno · Por confirmar",
+      time: "08:00 — 08:30",
+      tip: "Un café y un cornetto cerca de Termini antes de empezar el día."
+    }
+  };
+
+  const tooltip = document.getElementById('mapTooltip');
+  const ttName  = document.getElementById('ttName');
+  const ttTime  = document.getElementById('ttTime');
+  const ttTip   = document.getElementById('ttTip');
+  const canvas  = document.getElementById('mapCanvas');
+
+  function showTooltip(id, cx, cy) {
+    const d = stopData[id];
+    if (!d) return;
+    ttName.textContent = d.name;
+    ttTime.textContent = d.time;
+    ttTip.textContent  = d.tip || '';
+    tooltip.classList.add('visible');
+    positionTooltip(cx, cy);
+    document.querySelectorAll('.stop-list-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll(`.stop-list-item[data-id="${id}"]`).forEach(el => el.classList.add('active'));
+  }
+
+  function positionTooltip(cx, cy) {
+    const rect = canvas.getBoundingClientRect();
+    let tx = cx - rect.left + 14;
+    let ty = cy - rect.top - 10;
+    if (tx + 252 > rect.width) tx = cx - rect.left - 256;
+    if (ty < 4) ty = 4;
+    if (ty + 120 > rect.height) ty = rect.height - 125;
+    tooltip.style.left = tx + 'px';
+    tooltip.style.top  = ty + 'px';
+    tooltip.style.transform = '';
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('visible');
+    tooltip.style.transform = '';
+  }
+
+  document.querySelectorAll('.map-pin').forEach(pin => {
+    pin.addEventListener('mouseenter', e => showTooltip(pin.dataset.id, e.clientX, e.clientY));
+    pin.addEventListener('mousemove',  e => positionTooltip(e.clientX, e.clientY));
+    pin.addEventListener('mouseleave', hideTooltip);
+    pin.addEventListener('click', e => {
+      e.stopPropagation();
+      showTooltip(pin.dataset.id, e.clientX, e.clientY);
+    });
+  });
+
+  document.querySelectorAll('.stop-list-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const id = this.dataset.id;
+      const d  = stopData[id];
+      if (!d) return;
+      ttName.textContent = d.name;
+      ttTime.textContent = d.time;
+      ttTip.textContent  = d.tip || '';
+      tooltip.style.left      = '50%';
+      tooltip.style.top       = '12px';
+      tooltip.style.transform = 'translateX(-50%)';
+      tooltip.classList.add('visible');
+      document.querySelectorAll('.stop-list-item').forEach(el => el.classList.remove('active'));
+      this.classList.add('active');
+      setTimeout(hideTooltip, 3800);
+    });
+  });
+
+  canvas.addEventListener('click', () => {
+    hideTooltip();
+    document.querySelectorAll('.stop-list-item').forEach(el => el.classList.remove('active'));
+  });
+})();
+</script>
+
+<!-- FOOTER -->
+<footer>
+  <p>"Roma non basta una vita"</p>
+  <small>Roma no le basta a una vida · Nuestro viaje · Un día eterno</small>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lb-overlay" id="lightbox">
+  <button class="lb-close" id="lb-close" aria-label="Cerrar">✕</button>
+  <div class="lb-img-wrap"><img id="lb-img" src="" alt=""></div>
+  <div class="lb-caption" id="lb-caption">📍 Foto para recrear</div>
+</div>
+
+<script>
+  const overlay = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lb-img');
+  const lbCap   = document.getElementById('lb-caption');
+  const lbClose = document.getElementById('lb-close');
+  document.querySelectorAll('.stop-photos img').forEach(img => {
+    img.addEventListener('click', e => {
+      e.stopPropagation();
+      lbImg.src = img.src; lbImg.alt = img.alt || '';
+      lbCap.textContent = img.alt ? '📍 ' + img.alt : '📍 Foto para recrear';
+      overlay.classList.add('active'); document.body.style.overflow = 'hidden';
+    });
+  });
+  overlay.addEventListener('click', cerrar);
+  lbClose.addEventListener('click', cerrar);
+  document.querySelector('.lb-img-wrap').addEventListener('click', e => e.stopPropagation());
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrar(); });
+  function cerrar() { overlay.classList.remove('active'); document.body.style.overflow = ''; setTimeout(() => { lbImg.src = ''; }, 250); }
+</script>
+
+</body>
+</html>
